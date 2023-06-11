@@ -30,7 +30,10 @@ import matplotlib.patches as mpatch
 # plt.show()
 
 class SpiralMaker:
-    def __int__(self, random_colours=True, save_figure=False, theta=None, degrees=360, modifier=5, iterations=1000):
+    def __int__(self, output_dir, random_colours=True, save_figure=False, theta=None, degrees=360, modifier=5, iterations=1000):
+        # Set directories
+        self.output_dir = output_dir
+
         # Spiral variables
         self.theta = theta
         self.degrees = degrees
@@ -134,7 +137,7 @@ class SpiralMaker:
                 sns.despine()
             except:
                 pass
-            
+
         if plot_type == 'scatter':
             plt.axis('off')
             plt.title(num, y=-0.01, loc='right', c='#686868', font='Rubix', fontsize=25)
@@ -145,4 +148,26 @@ class SpiralMaker:
 
         if self.save_figure:
             if title[:2] == '2d':
-                if os.path
+                if os.path.isdir(f'{self.output_dir}/{temp_dir[2:]}/2d'):
+                    pass
+                else:
+                    os.mkdir(f'{self.output_dir}/{temp_dir[2:]}/2d')
+                plt.savefig(f'{self.output_dir}/{temp_dir[2:]}/2d/{num}', dpi=400)
+            else:
+                if os.path.isdir(f'{self.output_dir}/{temp_dir}'):
+                    pass
+                else:
+                    os.mkdir(f'{self.output_dir}/{temp_dir}')
+                plt.savefig(f'{self.output_dir}/{temp_dir}/{num}', dpi=400, transparent=True)
+        else:
+            plt.show()
+        plt.close()
+
+    def generate_primes(self, low, high):
+        non_primes = set(q for w in range(2, 8) for q in range(w*2, high, w))
+        primes = [x for x in range(low, high) if x not in non_primes]
+
+        print(primes)
+
+sp = SpiralMaker()
+sp.generate_primes(1, 2000)
