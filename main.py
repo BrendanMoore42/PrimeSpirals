@@ -134,6 +134,7 @@ class SpiralMaker:
                 sns.despine()
             except:
                 pass
+            
         if plot_type == 'scatter':
             plt.axis('off')
             plt.title(num, y=-0.01, loc='right', c='#686868', font='Rubix', fontsize=25)
