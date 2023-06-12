@@ -10,6 +10,7 @@ import os
 import glob
 import random
 import math as m
+import itertools
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -30,17 +31,27 @@ import matplotlib.patches as mpatch
 # plt.show()
 
 class SpiralMaker:
-    def __init__(self, output_dir, low, high, random_colours=True, save_figure=False, theta=None, degrees=360, modifier=5, iterations=1000):
+    def __init__(self, output_dir, low, high, series="primes", plot_type="scatter", random_colours=True, save_figure=False, theta=None, degrees=360, modifier=None, iterations=1000):
         # Set directories
         self.output_dir = output_dir
+        self.plot_type = plot_type  # Can be scatter, scatter3d, scatter4d
+
+        # Set integer sequence
+        if series == "primes":
+            self.low = low  # lower bound for primes
+            self.high = high  # upper bound for primes
+            self.series = self.generate_primes(low, high)
+        else:  # if there is a sequence other than primes to try, this takes a list
+            self.series = series  # list
 
         # Spiral variables
-        self.low = low  # lower bound for primes
-        self.high = high  # upper bound for primes
         self.theta = theta
         self.degrees = degrees
-        self.modifier = modifier
         self.iterations = iterations
+        if not modifier:
+            self.modifier = 1
+        else:
+            self.modifier = modifier
 
         # Plot variables
         self.alpha = 0.8
@@ -56,7 +67,7 @@ class SpiralMaker:
                             '#7bc043', '#0392cf', '#63ace5',
                             '#f6abb6', '#851e3e', '#3d1e6d']
 
-    def generate_primes(self, low=2, high=10):
+    def generate_primes(self, low, high):
         primes = []
         for i in range(low, high):
             for j in range(2, int(i / 2) + 1):
@@ -64,6 +75,7 @@ class SpiralMaker:
                     break
             else:
                 primes.append(i)
+
         return primes
 
     def generate_xy(self):
@@ -96,6 +108,7 @@ class SpiralMaker:
         temp_dir, num = title.split("_")[0], title.split('_')[1]
         sizes = []  # list for increasing plot size as spirals enlarge
         size_modifier = 1
+        colours = []
         temp_x, temp_y, z = [], [], []
         for i, xy in enumerate(zip(x, y)):
             if plot_type == 'scatter':
@@ -107,6 +120,9 @@ class SpiralMaker:
             else:
                 sizes.append(int((i * 1 / mod_variable * int(num))))
 
+            # Generate list of colours to x, y
+            colours.append(self.colours[int((int(num)*i*self.modifier)) % len(self.colours)])
+            # Set up x, y lists
             temp_x.append(int(xy[0]))
             temp_y.append(int(xy[1]))
 
@@ -120,11 +136,11 @@ class SpiralMaker:
         if plot_type == 'scatter3d':
             fig = plt.figure(figsize=plot_size)
             ax = fig.add_subplot(projection='3d')
-            ax.scatter(x, y, z, c=self.colours, s=sizes, alpha=self.alpha)
+            ax.scatter(x, y, z, c=colours, s=sizes, alpha=self.alpha)
         if plot_type == 'scatter4d':
             fig = plt.figure(figsize=plot_size)
             ax = fig.add_subplot(projection='3d')
-            ax.scatter(x, y, z, c=self.colours, s=sizes, alpha=self.alpha)
+            ax.scatter(x, y, z, c=colours, s=sizes, alpha=self.alpha)
 
             # Rotate matrix
             v1 = np.array([x, y, z])
@@ -143,7 +159,7 @@ class SpiralMaker:
             if plot_type == 'plot':
                 plt.plot(x, y)
             if plot_type == 'scatter':
-                plt.scatter(x, y, c=self.colours, s=sizes, alpha=self.alpha)
+                plt.scatter(x, y, s=sizes, c=colours, alpha=self.alpha)
 
             try:
                 sns.despine()
@@ -152,9 +168,10 @@ class SpiralMaker:
 
         if plot_type == 'scatter':
             plt.axis('off')
-            plt.title(num, y=-0.01, loc='right', c='#686868', font='Rubix', fontsize=25)
+            plt.title(num, y=-0.01, loc='right', c='#686868', fontsize=25)
         else:
             new_title = title.split("_")[2:]
+            print(title)
             new_title = f'{new_title[2]}t-{new_title[0]}:{new_title[1]}, var:{new_title[3].split("_")[0]}, {new_title[3].split("_")[1]}'
             plt.title(new_title, y=1, pad=-35, loc='right', font='Lucida Sans Unicode', fontsize=25)
 
@@ -177,7 +194,16 @@ class SpiralMaker:
 
     def run_spiral_maker(self):
         """Main function that puts it all together, outputs images to specified directory"""
-        pass
+        for p in self.series:
+            title = f"{self.plot_type}--{str(self.low)}p--{str(self.degrees)}p--{str(self.modifier)}--{str(self.iterations)}i-_"
+            if os.path.isfile(f"output/{title[:-1]}/{str(p)}.png"):
+                continue
+            else:
+                x, y = self.generate_xy()
+                self.plot_spiral(x, y, self.modifier, plot_type=self.plot_type, title=title+str(p), hide_ax=True)
+                if self.plot_type == "scatter4d":
+                    self.plot_spiral(x, y, self.modifier, plot_type=self.plot_type, title="2d"+title+str(p), hide_ax=True)
 
-sp = SpiralMaker(output_dir="output", low=2, high=100)  # Primes start at 2 and up til 100
 
+sp = SpiralMaker(output_dir="output", low=2, high=10, modifier=1, plot_type="scatter", save_figure=False)  # Primes start at 2 and up til 100
+sp.run_spiral_maker()
