@@ -30,11 +30,13 @@ import matplotlib.patches as mpatch
 # plt.show()
 
 class SpiralMaker:
-    def __int__(self, output_dir, random_colours=True, save_figure=False, theta=None, degrees=360, modifier=5, iterations=1000):
+    def __init__(self, output_dir, low, high, random_colours=True, save_figure=False, theta=None, degrees=360, modifier=5, iterations=1000):
         # Set directories
         self.output_dir = output_dir
 
         # Spiral variables
+        self.low = low  # lower bound for primes
+        self.high = high  # upper bound for primes
         self.theta = theta
         self.degrees = degrees
         self.modifier = modifier
@@ -53,6 +55,16 @@ class SpiralMaker:
             self.colours = ['#ee4035', '#f37736', '#fdf498',
                             '#7bc043', '#0392cf', '#63ace5',
                             '#f6abb6', '#851e3e', '#3d1e6d']
+
+    def generate_primes(self, low=2, high=10):
+        primes = []
+        for i in range(low, high):
+            for j in range(2, int(i / 2) + 1):
+                if i % j == 0:
+                    break
+            else:
+                primes.append(i)
+        return primes
 
     def generate_xy(self):
         """Create a list of xy points"""
@@ -163,11 +175,9 @@ class SpiralMaker:
             plt.show()
         plt.close()
 
-    def generate_primes(self, low, high):
-        non_primes = set(q for w in range(2, 8) for q in range(w*2, high, w))
-        primes = [x for x in range(low, high) if x not in non_primes]
+    def run_spiral_maker(self):
+        """Main function that puts it all together, outputs images to specified directory"""
+        pass
 
-        print(primes)
+sp = SpiralMaker(output_dir="output", low=2, high=100)  # Primes start at 2 and up til 100
 
-sp = SpiralMaker()
-sp.generate_primes(1, 2000)
