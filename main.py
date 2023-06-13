@@ -31,7 +31,7 @@ import matplotlib.patches as mpatch
 # plt.show()
 
 class SpiralMaker:
-    def __init__(self, output_dir, low, high, series="primes", plot_type="scatter", random_colours=True, save_figure=False, theta=None, degrees=360, modifier=None, iterations=1000):
+    def __init__(self, output_dir, low, high, series="primes", plot_type="scatter", random_colours=True, save_figure=False, degrees=360, modifier=None, deg_modifier=None, iterations=1000):
         # Set directories
         self.output_dir = output_dir
         self.plot_type = plot_type  # Can be scatter, scatter3d, scatter4d
@@ -42,16 +42,16 @@ class SpiralMaker:
             self.high = high  # upper bound for primes
             self.series = self.generate_primes(low, high)
         else:  # if there is a sequence other than primes to try, this takes a list
-            self.series = series  # list
+            self.series = series  # list of integers
 
         # Spiral variables
-        self.theta = theta
         self.degrees = degrees
         self.iterations = iterations
         if not modifier:
             self.modifier = 1
         else:
             self.modifier = modifier
+        self.deg_modifier = deg_modifier
 
         # Plot variables
         self.alpha = 0.8
@@ -78,10 +78,10 @@ class SpiralMaker:
 
         return primes
 
-    def generate_xy(self):
+    def generate_xy(self, theta=None, degrees=360, deg_modifier=5, cycles=1000):
         """Create a list of xy points"""
         # Set theta or make a new one
-        theta = self.theta if self.theta else np.radians(np.linspace(0, self.degrees*self.modifier, self.iterations))
+        theta = theta if theta else np.radians(np.linspace(0, degrees*deg_modifier, cycles))
         r = theta**2
         x = r*np.cos(theta)
         y = r*np.sin(theta)
@@ -171,7 +171,6 @@ class SpiralMaker:
             plt.title(num, y=-0.01, loc='right', c='#686868', fontsize=25)
         else:
             new_title = title.split("_")[2:]
-            print(title)
             new_title = f'{new_title[2]}t-{new_title[0]}:{new_title[1]}, var:{new_title[3].split("_")[0]}, {new_title[3].split("_")[1]}'
             plt.title(new_title, y=1, pad=-35, loc='right', font='Lucida Sans Unicode', fontsize=25)
 
@@ -199,11 +198,12 @@ class SpiralMaker:
             if os.path.isfile(f"output/{title[:-1]}/{str(p)}.png"):
                 continue
             else:
-                x, y = self.generate_xy()
-                self.plot_spiral(x, y, self.modifier, plot_type=self.plot_type, title=title+str(p), hide_ax=True)
+                x, y = self.generate_xy(None, self.degrees*int(p), self.modifier*p, self.iterations)
+                self.plot_spiral(x, y, self.modifier*p, plot_type=self.plot_type, title=title+str(p), hide_ax=True)
                 if self.plot_type == "scatter4d":
                     self.plot_spiral(x, y, self.modifier, plot_type=self.plot_type, title="2d"+title+str(p), hide_ax=True)
 
 
-sp = SpiralMaker(output_dir="output", low=2, high=10, modifier=1, plot_type="scatter", save_figure=False)  # Primes start at 2 and up til 100
+phi = (1+np.sqrt(5)) / 2
+sp = SpiralMaker(output_dir="output", low=2, high=100, random_colours=False, deg_modifier=phi*2, modifier=np.pi*6, plot_type="scatter", save_figure=True)  # Primes start at 2 and up til 100
 sp.run_spiral_maker()
