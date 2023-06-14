@@ -1,6 +1,7 @@
 ## Prime Spirals
 Generate an infinite number of spirals using any integer sequence and colour palette. Can create 2d or 3d plots.
 
+Prime numbers are numbers without factors other than 1 and themselves. There are an infinite number of primes, per Euclid's Theorem. Additionally, The generator works with any integer sequence and doesn't necessarily need to be Primes, but Primes are great. 
 ### Showcase
 For hundreds of spirals generated from primes between 2 and 10000, check out https://primespirals.github.io/
 
