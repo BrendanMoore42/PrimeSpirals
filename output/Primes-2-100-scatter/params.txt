@@ -1,0 +1,1 @@
+Plot: scatter, Lower bound: 2, Upper bound: 100, Degrees: 360, Degree Modifier: 3.236, Modifier: 18.85, Iterations: 1000
