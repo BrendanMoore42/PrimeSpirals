@@ -36,4 +36,4 @@ Some numbers generate fascinating colour sequences.
 
 <img src="output/Primes-100-150-scatter3d/139.png" alt="139" width="500">
 
-And sometimes the rotation axis flips. 
+There's an infinite world of spirals generated from primes, each batch as interesting as the next. 
