@@ -1,6 +1,6 @@
 """
 Prime Spiral Maker
-Generates an infinite number of spirals based on any given series
+Generates an infinite number of spirals based on any given series in 2d or 3d.
 
 author: brendanmoore42@github.com
 date: June 2023
@@ -8,13 +8,9 @@ date: June 2023
 import os
 import random
 import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image, ImageDraw, ImageFilter
 import seaborn as sns
-
-from collections import Counter
+import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import matplotlib.patches as mpatch
 
 class SpiralMaker:
     def __init__(self, title, output_dir, low, high, series="primes", plot_type="scatter", random_colours=True, save_figure=False, degrees=360, modifier=None, deg_modifier=None, iterations=1000):
